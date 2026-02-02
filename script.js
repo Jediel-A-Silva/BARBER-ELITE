@@ -138,6 +138,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (users[role] && users[role].email === email && users[role].password === password) {
             currentUser = { ...users[role], role: role };
             
+             localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
             // Update name displays
             if (role === 'client') {
                 document.getElementById('clientName').textContent = currentUser.name;
@@ -848,18 +850,40 @@ window.addEventListener('scroll', function() {
 });
 
 // ===================================
-// INITIALIZATION
+// INITIALIZATION + SESSION RESTORE
 // ===================================
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Render barbers on landing page
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ===== Restore session =====
+    const savedUser = localStorage.getItem('currentUser');
+
+    if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+
+        if (currentUser.role === 'client') {
+            document.getElementById('clientName').textContent = currentUser.name;
+            showClientDashboard();
+        } 
+        else if (currentUser.role === 'barber') {
+            document.getElementById('barberName').textContent = currentUser.name;
+            showBarberDashboard();
+        } 
+        else if (currentUser.role === 'admin') {
+            showAdminDashboard();
+        }
+    } else {
+        showLanding();
+    }
+
+    // ===== Landing init =====
     renderBarbersOnLanding();
-    
-    // Initialize carousels
+
+    // ===== Carousels =====
     initCarousel('carousel1', 'carousel1-controls');
     initCarousel('carousel2', 'carousel2-controls');
 
-    // Add sample appointments for demo
+    // ===== Demo appointments =====
     appointments = [
         {
             id: 1,
@@ -882,10 +906,8 @@ document.addEventListener('DOMContentLoaded', function() {
             value: 50.00
         }
     ];
-});
 
-// Smooth scroll for anchor links
-document.addEventListener('DOMContentLoaded', function() {
+    // ===== Smooth scroll =====
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             const href = this.getAttribute('href');
@@ -901,4 +923,5 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
 });
