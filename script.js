@@ -40,9 +40,6 @@ const users = {
     admin: { email: "admin@teste.com", password: "123456", name: "Administrador" }
 };
 
-// Current user session
-let currentUser = null;
-
 // Appointments storage
 let appointments = [];
 
@@ -75,30 +72,48 @@ function showLogin() {
 }
 
 function showClientDashboard() {
-    document.getElementById('landingPage').classList.add('hidden');
-    document.getElementById('loginPage').classList.add('hidden');
-    document.getElementById('clientDashboard').classList.remove('hidden');
-    document.getElementById('barberDashboard').classList.add('hidden');
-    document.getElementById('adminDashboard').classList.add('hidden');
+  if (!window.currentUser) return; // 🔒 só entra se estiver logado
+
+  document.getElementById("landingPage").classList.add("hidden");
+  document.getElementById("loginPage").classList.add("hidden");
+
+  document.getElementById("clientDashboard").classList.remove("hidden");
+  document.getElementById("barberDashboard").classList.add("hidden");
+  document.getElementById("adminDashboard").classList.add("hidden");
+
+  if (typeof loadClientData === "function") {
     loadClientData();
+  }
 }
 
 function showBarberDashboard() {
-    document.getElementById('landingPage').classList.add('hidden');
-    document.getElementById('loginPage').classList.add('hidden');
-    document.getElementById('clientDashboard').classList.add('hidden');
-    document.getElementById('barberDashboard').classList.remove('hidden');
-    document.getElementById('adminDashboard').classList.add('hidden');
+  if (!window.currentUser) return; // 🔒 só entra se estiver logado
+
+  document.getElementById("landingPage").classList.add("hidden");
+  document.getElementById("loginPage").classList.add("hidden");
+
+  document.getElementById("barberDashboard").classList.remove("hidden");
+  document.getElementById("clientDashboard").classList.add("hidden");
+  document.getElementById("adminDashboard").classList.add("hidden");
+
+  if (typeof loadBarberData === "function") {
     loadBarberData();
+  }
 }
 
 function showAdminDashboard() {
-    document.getElementById('landingPage').classList.add('hidden');
-    document.getElementById('loginPage').classList.add('hidden');
-    document.getElementById('clientDashboard').classList.add('hidden');
-    document.getElementById('barberDashboard').classList.add('hidden');
-    document.getElementById('adminDashboard').classList.remove('hidden');
+  if (!window.currentUser) return; // 🔒 só entra se estiver logado
+
+  document.getElementById("landingPage").classList.add("hidden");
+  document.getElementById("loginPage").classList.add("hidden");
+
+  document.getElementById("adminDashboard").classList.remove("hidden");
+  document.getElementById("clientDashboard").classList.add("hidden");
+  document.getElementById("barberDashboard").classList.add("hidden");
+
+  if (typeof loadAdminData === "function") {
     loadAdminData();
+  }
 }
 
 function logout() {
@@ -136,33 +151,41 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = loginPassword.value;
     const roleSelected = loginRole.value;
 
-    firebase.auth().signInWithEmailAndPassword(email, password)
-      .then((cred) => {
-        return firebase.firestore()
-          .collection("users")
-          .doc(email)
-          .get();
-      })
-      .then((doc) => {
-        if (!doc.exists) {
-          alert("Usuário não encontrado no sistema.");
-          firebase.auth().signOut();
-          return;
-        }
+firebase.auth().signInWithEmailAndPassword(email, password)
+  .then((cred) => {
+    return firebase.firestore()
+      .collection("users")
+      .doc(cred.user.uid) // AQUI ESTÁ A CORREÇÃO
+      .get();
+  })
+  .then((doc) => {
+    if (!doc.exists) {
+      alert("Usuário não encontrado no sistema.");
+      firebase.auth().signOut();
+      return;
+    }
 
-        const userData = doc.data();
+    const userData = doc.data();
 
-        if (userData.role !== roleSelected) {
-          alert("Perfil selecionado incorreto.");
-          firebase.auth().signOut();
-          return;
-        }
+    if (userData.role !== roleSelected) {
+      alert("Perfil selecionado incorreto.");
+      firebase.auth().signOut();
+      return;
+    }
 
-        openDashboard(userData);
-      })
-      .catch((err) => {
-        alert("Erro no login: " + err.message);
-      });
+    currentUser = {
+      uid: firebase.auth().currentUser.uid,
+      ...userData
+    };
+
+    if (userData.role === "client") showClientDashboard();
+    if (userData.role === "barber") showBarberDashboard();
+    if (userData.role === "admin") showAdminDashboard();
+  })
+  .catch((err) => {
+    alert("Erro no login: " + err.message);
+  });
+
   });
 });
 
