@@ -1,0 +1,111 @@
+/* ===================================
+   MAIN CSS FILE
+   Importa todos os outros arquivos CSS
+=================================== */
+
+@import 'reset.css';
+@import 'variables.css';
+@import 'layout.css';
+@import 'components.css';
+@import 'animations.css';
+@import 'pages.css';
+
+/* ===================================
+   UTILITIES ADICIONAIS
+=================================== */
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    font-size: 12pt;
+    color: black;
+    background: white;
+  }
+  
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+  
+  .card {
+    border: 1px solid #ddd;
+    box-shadow: none;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  :root {
+    --primary-color: #000000;
+    --secondary-color: #ffffff;
+    --border-color: #000000;
+  }
+  
+  .btn-primary {
+    border: 2px solid black;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: var(--border-radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color);
+}
+
+/* Selection color */
+::selection {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+}
+
+/* Focus outline for accessibility */
+:focus-visible {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Skip to main content link */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--primary-color);
+  color: var(--secondary-color);
+  padding: var(--spacing-sm);
+  text-decoration: none;
+  z-index: var(--z-popover);
+  border-radius: 0 0 var(--border-radius-md) 0;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
