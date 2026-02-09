@@ -152,8 +152,8 @@
                     <div class="form-group">
                         <label for="loginRole">Entrar como</label>
                         <select id="loginRole" required>
-                            <option value="client">Cliente</option>
-                            <option value="barber">Barbeiro</option>
+                            <option value="cliente">Cliente</option>
+                            <option value="barbeiro">Barbeiro</option>
                             <option value="admin">Administrador</option>
                         </select>
                     </div>
@@ -162,48 +162,6 @@
                 <div class="login-footer">
                     <p>Ainda não tem conta? <a href="#" onclick="alert('Funcionalidade de cadastro será implementada em breve!'); return false;">Cadastre-se</a></p>
                     <p><a href="#" onclick="showLanding(); return false;">Voltar ao site</a></p>
-                </div>
-            </div>
-
-            <!-- Credentials Panel -->
-            <div class="credentials-panel fade-in-up">
-                <h3>🔑 Credenciais para Teste</h3>
-                <p class="info-text">Use estas credenciais temporárias apenas para demonstração do sistema</p>
-                
-                <!-- Cliente -->
-                <div class="credential-item client">
-                    <h4>Cliente</h4>
-                    <div class="credential-info">
-                        <p><strong>Email:</strong> cliente@teste.com</p>
-                        <p><strong>Senha:</strong> 123456</p>
-                    </div>
-                    <button class="quick-fill-btn" onclick="quickFillLogin('cliente@teste.com', '123456', 'client')">
-                        Preencher automaticamente
-                    </button>
-                </div>
-
-                <!-- Barbeiro -->
-                <div class="credential-item barber">
-                    <h4>Barbeiro</h4>
-                    <div class="credential-info">
-                        <p><strong>Email:</strong> barbeiro@teste.com</p>
-                        <p><strong>Senha:</strong> 123456</p>
-                    </div>
-                    <button class="quick-fill-btn" onclick="quickFillLogin('barbeiro@teste.com', '123456', 'barber')">
-                        Preencher automaticamente
-                    </button>
-                </div>
-
-                <!-- Administrador -->
-                <div class="credential-item admin">
-                    <h4>Administrador</h4>
-                    <div class="credential-info">
-                        <p><strong>Email:</strong> admin@teste.com</p>
-                        <p><strong>Senha:</strong> 123456</p>
-                    </div>
-                    <button class="quick-fill-btn" onclick="quickFillLogin('admin@teste.com', '123456', 'admin')">
-                        Preencher automaticamente
-                    </button>
                 </div>
             </div>
         </div>
