@@ -1,649 +1,1021 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Barber Elite - Agendamento Premium</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
 
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="./barbearia-saas/css/animations.css" />
+    <link rel="stylesheet" href="./barbearia-saas/css/components.css" />
+    <link rel="stylesheet" href="./barbearia-saas/css/layout.css" />
+    <link rel="stylesheet" href="./barbearia-saas/css/main.css" />
+    <link rel="stylesheet" href="./barbearia-saas/css/reset.css" />
+    <link rel="stylesheet" href="./barbearia-saas/css/pages.css" />
+    <link rel="stylesheet" href="./barbearia-saas/css/variables.css" />
+  </head>
+
+  <body>
     <!-- ===================================
          LANDING PAGE
     =================================== -->
-    <div id="landingPage">
-        <!-- Navigation -->
-        <nav class="navbar">
-            <div class="container nav-container">
-                <a href="#" class="logo">BARBER ELITE</a>
-                <ul class="nav-links">
-                    <li><a href="#home">Início</a></li>
-                    <li><a href="#como-funciona">Como Funciona</a></li>
-                    <li><a href="#barbeiros">Barbeiros</a></li>
-                    <li><a href="#" onclick="showLogin(); return false;">Login</a></li>
-                </ul>
-            </div>
-        </nav>
+    <div id="landingPage" class="hidden">
+      <!-- Navigation -->
+      <nav class="navbar">
+        <div class="container nav-container">
+          <a href="#" class="logo">BARBER ELITE</a>
+          <ul class="nav-links">
+            <li><a href="#home">Início</a></li>
+            <li><a href="#como-funciona">Como Funciona</a></li>
+            <li><a href="#barbeiros">Barbeiros</a></li>
+            <li>
+              <a
+                href="#"
+                onclick="
+                  showLogin();
+                  return false;
+                "
+                >Login</a
+              >
+            </li>
+          </ul>
+        </div>
+      </nav>
 
-        <!-- Hero Section -->
-        <section class="hero" id="home">
-            <div class="hero-content fade-in-up">
-                <h1>Estilo & Precisão</h1>
-                <p>Agende seu horário com os melhores barbeiros da cidade. Experiência premium em um clique.</p>
-                <div class="hero-buttons">
-                    <button class="btn btn-primary" onclick="showLogin()">Agendar Horário</button>
-                    <a href="#como-funciona" class="btn btn-secondary">Saiba Mais</a>
-                </div>
-            </div>
-        </section>
+      <!-- Hero Section -->
+      <section class="hero" id="home">
+        <div class="hero-content fade-in-up">
+          <h1>Estilo & Precisão</h1>
+          <p>
+            Agende seu horário com os melhores barbeiros da cidade. Experiência
+            premium em um clique.
+          </p>
+          <div class="hero-buttons">
+            <button class="btn btn-primary" onclick="showLogin()">
+              Agendar Horário
+            </button>
+            <a href="#como-funciona" class="btn btn-secondary">Saiba Mais</a>
+          </div>
+        </div>
+      </section>
 
-        <!-- Como Funciona Section -->
-        <section class="section how-it-works" id="como-funciona">
-            <div class="container">
-                <div class="section-title">
-                    <h2>Como Funciona</h2>
-                    <p>Agende seu horário em 3 passos simples</p>
-                </div>
-                <div class="steps-grid">
-                    <div class="step-card fade-in-left">
-                        <div class="step-number">1</div>
-                        <h3>Faça seu Login</h3>
-                        <p>Crie sua conta rapidamente ou faça login com suas credenciais.</p>
-                    </div>
-                    <div class="step-card fade-in-up">
-                        <div class="step-number">2</div>
-                        <h3>Escolha o Barbeiro</h3>
-                        <p>Selecione seu barbeiro preferido e veja os horários disponíveis.</p>
-                    </div>
-                    <div class="step-card fade-in-right">
-                        <div class="step-number">3</div>
-                        <h3>Confirme o Agendamento</h3>
-                        <p>Escolha o melhor horário e confirme. Pronto! Você receberá uma confirmação.</p>
-                    </div>
-                </div>
+      <!-- Como Funciona Section -->
+      <section class="section how-it-works" id="como-funciona">
+        <div class="container">
+          <div class="section-title">
+            <h2>Como Funciona</h2>
+            <p>Agende seu horário em 3 passos simples</p>
+          </div>
+          <div class="steps-grid">
+            <div class="step-card fade-in-left">
+              <div class="step-number">1</div>
+              <h3>Faça seu Login</h3>
+              <p>
+                Crie sua conta rapidamente ou faça login com suas credenciais.
+              </p>
             </div>
-        </section>
+            <div class="step-card fade-in-up">
+              <div class="step-number">2</div>
+              <h3>Escolha o Barbeiro</h3>
+              <p>
+                Selecione seu barbeiro preferido e veja os horários disponíveis.
+              </p>
+            </div>
+            <div class="step-card fade-in-right">
+              <div class="step-number">3</div>
+              <h3>Confirme o Agendamento</h3>
+              <p>
+                Escolha o melhor horário e confirme. Pronto! Você receberá uma
+                confirmação.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        <!-- Carousel 1 - Galeria -->
-        <section class="section carousel-section">
-            <div class="container">
-                <div class="section-title">
-                    <h2>Nossa Galeria</h2>
-                    <p>Conheça nosso espaço premium</p>
-                </div>
-                <div class="carousel-container">
-                    <div class="carousel-track" id="carousel1">
-                        <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=2000')"></div>
-                        <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2000')"></div>
-                        <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1621605815971-fbc98d665033?q=80&w=2000')"></div>
-                    </div>
-                    <div class="carousel-controls" id="carousel1-controls"></div>
-                </div>
+      <!-- Carousel 1 - Galeria -->
+      <section class="section carousel-section">
+        <div class="container">
+          <div class="section-title">
+            <h2>Nossa Galeria</h2>
+            <p>Conheça nosso espaço premium</p>
+          </div>
+          <div class="carousel-container">
+            <div class="carousel-track" id="carousel1">
+              <div
+                class="carousel-item"
+                style="
+                  background-image: url(&quot;https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=2000&quot;);
+                "
+              ></div>
+              <div
+                class="carousel-item"
+                style="
+                  background-image: url(&quot;https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2000&quot;);
+                "
+              ></div>
+              <div
+                class="carousel-item"
+                style="
+                  background-image: url(&quot;https://images.unsplash.com/photo-1621605815971-fbc98d665033?q=80&w=2000&quot;);
+                "
+              ></div>
             </div>
-        </section>
+            <div class="carousel-controls" id="carousel1-controls"></div>
+          </div>
+        </div>
+      </section>
 
-        <!-- Barbeiros Section -->
-        <section class="section barbers" id="barbeiros">
-            <div class="container">
-                <div class="section-title">
-                    <h2>Nossos Profissionais</h2>
-                    <p>Barbeiros experientes e apaixonados pelo que fazem</p>
-                </div>
-                <div class="barbers-grid" id="barbersGrid">
-                    <!-- Populated by JavaScript -->
-                </div>
-            </div>
-        </section>
+      <!-- Barbeiros Section -->
+      <section class="section barbers" id="barbeiros">
+        <div class="container">
+          <div class="section-title">
+            <h2>Nossos Profissionais</h2>
+            <p>Barbeiros experientes e apaixonados pelo que fazem</p>
+          </div>
+          <div class="barbers-grid" id="barbersGrid">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+      </section>
 
-        <!-- Carousel 2 - Trabalhos -->
-        <section class="section carousel-section">
-            <div class="container">
-                <div class="section-title">
-                    <h2>Nossos Trabalhos</h2>
-                    <p>Resultados que falam por si</p>
-                </div>
-                <div class="carousel-container">
-                    <div class="carousel-track" id="carousel2">
-                        <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=2000')"></div>
-                        <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1605497788044-5a32c7078486?q=80&w=2000')"></div>
-                        <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=2000')"></div>
-                    </div>
-                    <div class="carousel-controls" id="carousel2-controls"></div>
-                </div>
+      <!-- Carousel 2 - Trabalhos -->
+      <section class="section carousel-section">
+        <div class="container">
+          <div class="section-title">
+            <h2>Nossos Trabalhos</h2>
+            <p>Resultados que falam por si</p>
+          </div>
+          <div class="carousel-container">
+            <div class="carousel-track" id="carousel2">
+              <div
+                class="carousel-item"
+                style="
+                  background-image: url(&quot;https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=2000&quot;);
+                "
+              ></div>
+              <div
+                class="carousel-item"
+                style="
+                  background-image: url(&quot;https://images.unsplash.com/photo-1605497788044-5a32c7078486?q=80&w=2000&quot;);
+                "
+              ></div>
+              <div
+                class="carousel-item"
+                style="
+                  background-image: url(&quot;https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=2000&quot;);
+                "
+              ></div>
             </div>
-        </section>
+            <div class="carousel-controls" id="carousel2-controls"></div>
+          </div>
+        </div>
+      </section>
 
-        <!-- Footer -->
-        <footer class="footer">
-            <div class="container">
-                <div class="footer-content">
-                    <h3>BARBER ELITE</h3>
-                    <p>📍 Rua da Elegância, 123 - Centro</p>
-                    <p>📞 (11) 9999-9999</p>
-                    <p>✉️ contato@barberelite.com.br</p>
-                </div>
-                <div class="footer-bottom">
-                    <p>&copy; 2024 Barber Elite. Todos os direitos reservados.</p>
-                </div>
-            </div>
-        </footer>
+      <!-- Footer -->
+      <footer class="footer">
+        <div class="container">
+          <div class="footer-content">
+            <h3>BARBER ELITE</h3>
+            <p>📍 Rua da Elegância, 123 - Centro</p>
+            <p>📞 (11) 9999-9999</p>
+            <p>✉️ contato@barberelite.com.br</p>
+          </div>
+          <div class="footer-bottom">
+            <p>&copy; 2024 Barber Elite. Todos os direitos reservados.</p>
+          </div>
+        </div>
+      </footer>
     </div>
 
     <!-- ===================================
          LOGIN PAGE
     =================================== -->
     <div id="loginPage" class="hidden">
-        <div class="login-wrapper">
-            <!-- Login Form -->
-            <div class="login-container fade-in-up">
-                <div class="login-header">
-                    <h2>Bem-vindo de Volta</h2>
-                    <p>Entre para acessar o sistema</p>
-                </div>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="loginEmail">Email</label>
-                        <input type="email" id="loginEmail" placeholder="seu@email.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword">Senha</label>
-                        <input type="password" id="loginPassword" placeholder="Digite sua senha" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="loginRole">Entrar como</label>
-                        <select id="loginRole" required>
-                            <option value="cliente">Cliente</option>
-                            <option value="barbeiro">Barbeiro</option>
-                            <option value="admin">Administrador</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
-                </form>
-                <div class="login-footer">
-                    <p>Ainda não tem conta? <a href="#" onclick="alert('Funcionalidade de cadastro será implementada em breve!'); return false;">Cadastre-se</a></p>
-                    <p><a href="#" onclick="showLanding(); return false;">Voltar ao site</a></p>
-                </div>
+      <div class="login-wrapper">
+        <!-- Login Form -->
+        <div class="login-container fade-in-up">
+          <div class="login-header">
+            <h2>Bem-vindo de Volta</h2>
+            <p>Entre para acessar o sistema</p>
+          </div>
+          <form id="loginForm">
+            <div class="form-group">
+              <label for="loginEmail">Email</label>
+              <input
+                type="email"
+                id="loginEmail"
+                placeholder="seu@email.com"
+                required
+              />
             </div>
+            <div class="form-group">
+              <label for="loginPassword">Senha</label>
+              <input
+                type="password"
+                id="loginPassword"
+                placeholder="Digite sua senha"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="loginRole">Entrar como</label>
+              <select id="loginRole" required>
+                <option value="client">Cliente</option>
+                <option value="barber">Barbeiro</option>
+                <option value="admin">Administrador</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%">
+              Entrar
+            </button>
+          </form>
+          <div class="login-footer">
+            <button id="entrar" class="google-btn" onclick="loginWithGoogle()">
+              <img
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                alt="Google logo"
+              />
+              <span>Entrar com Google</span>
+            </button>
+            <br />
+            <a
+              href="#"
+              onclick="
+                openRegister();
+                return false;
+              "
+              >Cadastre-se</a
+            >
+            <p>
+              <a
+                href="#"
+                onclick="
+                  showLanding();
+                  return false;
+                "
+                >Voltar ao site</a
+              >
+            </p>
+          </div>
         </div>
+      </div>
+    </div>
+
+    <!-- ===================================
+     REGISTER PAGE
+=================================== -->
+    <div id="registerPage" class="hidden">
+      <div class="auth-wrapper">
+        <div class="auth-container fade-in-up">
+          <div class="auth-header">
+            <h2>Criar conta</h2>
+            <p>Preencha os dados para começar</p>
+          </div>
+
+          <form id="registerForm">
+            <div class="form-group">
+              <label>Nome completo</label>
+              <input
+                type="text"
+                id="registerName"
+                placeholder="Seu nome completo"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                id="registerEmail"
+                placeholder="seu@email.com"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Senha</label>
+              <input
+                type="password"
+                id="registerPassword"
+                placeholder="Crie uma senha"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Confirmar senha</label>
+              <input
+                type="password"
+                id="registerConfirmPassword"
+                placeholder="Repita a senha"
+                required
+              />
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">
+              Criar conta
+            </button>
+          </form>
+
+          <div class="auth-footer">
+            <p>
+              Já tem conta?
+              <a
+                href="#"
+                onclick="
+                  showLogin();
+                  return false;
+                "
+                >Entrar</a
+              >
+            </p>
+
+            <div class="divider"><span>ou</span></div>
+
+            <button class="btn btn-google" onclick="loginWithGoogle()">
+              Entrar com Google
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ===================================
          CLIENT DASHBOARD
     =================================== -->
     <div id="clientDashboard" class="dashboard hidden">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h3>BARBER ELITE</h3>
-                <p id="clientName">Cliente</p>
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h3>BARBER ELITE</h3>
+          <p id="clientName">Cliente</p>
+        </div>
+        <ul class="sidebar-menu">
+          <li>
+            <a
+              href="#"
+              class="active"
+              onclick="
+                showClientSection('appointments');
+                return false;
+              "
+              >Meus Agendamentos</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              onclick="
+                showClientSection('new-appointment');
+                return false;
+              "
+              >Novo Agendamento</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              onclick="
+                showClientSection('history');
+                return false;
+              "
+              >Histórico</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              onclick="
+                logout();
+                return false;
+              "
+              >Sair</a
+            >
+          </li>
+        </ul>
+      </aside>
+      <main class="main-content">
+        <div class="dashboard-header">
+          <h1>Painel do Cliente</h1>
+          <button
+            class="btn btn-primary"
+            onclick="showClientSection('new-appointment')"
+          >
+            Novo Agendamento
+          </button>
+        </div>
+
+        <!-- My Appointments Section -->
+        <div id="client-appointments" class="dashboard-section">
+          <div class="card">
+            <div class="card-header">
+              <h2>Próximos Agendamentos</h2>
             </div>
-            <ul class="sidebar-menu">
-                <li><a href="#" class="active" onclick="showClientSection('appointments'); return false;">Meus Agendamentos</a></li>
-                <li><a href="#" onclick="showClientSection('new-appointment'); return false;">Novo Agendamento</a></li>
-                <li><a href="#" onclick="showClientSection('history'); return false;">Histórico</a></li>
-                <li><a href="#" onclick="logout(); return false;">Sair</a></li>
-            </ul>
-        </aside>
-        <main class="main-content">
-            <div class="dashboard-header">
-                <h1>Painel do Cliente</h1>
-                <button class="btn btn-primary" onclick="showClientSection('new-appointment')">Novo Agendamento</button>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Horário</th>
+                    <th>Barbeiro</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="clientAppointmentsTable">
+                  <!-- Populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- New Appointment Section -->
+        <div id="client-new-appointment" class="dashboard-section hidden">
+          <div class="card">
+            <div class="card-header">
+              <h2>Novo Agendamento</h2>
             </div>
 
-            <!-- My Appointments Section -->
-            <div id="client-appointments" class="dashboard-section">
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Próximos Agendamentos</h2>
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Data</th>
-                                    <th>Horário</th>
-                                    <th>Barbeiro</th>
-                                    <th>Status</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="clientAppointmentsTable">
-                                <!-- Populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <h3 style="margin-bottom: 20px">Selecione o Barbeiro</h3>
+            <div class="barber-selection-grid" id="barberSelectionGrid">
+              <!-- Populated by JavaScript -->
             </div>
 
-            <!-- New Appointment Section -->
-            <div id="client-new-appointment" class="dashboard-section hidden">
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Novo Agendamento</h2>
-                    </div>
-                    
-                    <h3 style="margin-bottom: 20px;">Selecione o Barbeiro</h3>
-                    <div class="barber-selection-grid" id="barberSelectionGrid">
-                        <!-- Populated by JavaScript -->
-                    </div>
+            <div id="dateTimeSelection" class="hidden">
+              <h3 style="margin: 30px 0 20px">Selecione a Data</h3>
+              <div class="form-group">
+                <input
+                  type="date"
+                  id="appointmentDate"
+                  style="max-width: 300px"
+                />
+              </div>
 
-                    <div id="dateTimeSelection" class="hidden">
-                        <h3 style="margin: 30px 0 20px;">Selecione a Data</h3>
-                        <div class="form-group">
-                            <input type="date" id="appointmentDate" style="max-width: 300px;">
-                        </div>
+              <h3 style="margin: 30px 0 20px">Selecione o Horário</h3>
+              <div class="time-slots-grid" id="timeSlotsGrid">
+                <!-- Populated by JavaScript -->
+              </div>
 
-                        <h3 style="margin: 30px 0 20px;">Selecione o Horário</h3>
-                        <div class="time-slots-grid" id="timeSlotsGrid">
-                            <!-- Populated by JavaScript -->
-                        </div>
-
-                        <div style="margin-top: 30px;">
-                            <button class="btn btn-primary" onclick="confirmAppointment()">Confirmar Agendamento</button>
-                            <button class="btn btn-secondary" onclick="cancelNewAppointment()" style="margin-left: 10px;">Cancelar</button>
-                        </div>
-                    </div>
-                </div>
+              <div style="margin-top: 30px">
+                <button class="btn btn-primary" onclick="confirmAppointment()">
+                  Confirmar Agendamento
+                </button>
+                <button
+                  class="btn btn-secondary"
+                  onclick="cancelNewAppointment()"
+                  style="margin-left: 10px"
+                >
+                  Cancelar
+                </button>
+              </div>
             </div>
+          </div>
+        </div>
 
-            <!-- History Section -->
-            <div id="client-history" class="dashboard-section hidden">
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Histórico de Agendamentos</h2>
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Data</th>
-                                    <th>Horário</th>
-                                    <th>Barbeiro</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="clientHistoryTable">
-                                <!-- Populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+        <!-- History Section -->
+        <div id="client-history" class="dashboard-section hidden">
+          <div class="card">
+            <div class="card-header">
+              <h2>Histórico de Agendamentos</h2>
             </div>
-        </main>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Horário</th>
+                    <th>Barbeiro</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="clientHistoryTable">
+                  <!-- Populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
 
     <!-- ===================================
          BARBER DASHBOARD
     =================================== -->
     <div id="barberDashboard" class="dashboard hidden">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h3>BARBER ELITE</h3>
-                <p id="barberName">Barbeiro</p>
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h3>BARBER ELITE</h3>
+          <p id="barberName">Barbeiro</p>
+        </div>
+        <ul class="sidebar-menu">
+          <li>
+            <a
+              href="#"
+              class="active"
+              onclick="
+                showBarberSection('schedule');
+                return false;
+              "
+              >Minha Agenda</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              onclick="
+                showBarberSection('earnings');
+                return false;
+              "
+              >Ganhos</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              onclick="
+                showBarberSection('block-times');
+                return false;
+              "
+              >Bloquear Horários</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              onclick="
+                logout();
+                return false;
+              "
+              >Sair</a
+            >
+          </li>
+        </ul>
+      </aside>
+      <main class="main-content">
+        <div class="dashboard-header">
+          <h1>Painel do Barbeiro</h1>
+          <div
+            id="barberDailyEarnings"
+            style="
+              font-size: 1.2rem;
+              color: var(--primary-color);
+              font-weight: 600;
+            "
+          >
+            Ganhos Hoje: R$ 0,00
+          </div>
+        </div>
+
+        <!-- Schedule Section -->
+        <div id="barber-schedule" class="dashboard-section">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <h3>Agendamentos Hoje</h3>
+              <div class="stat-value" id="barberTodayCount">0</div>
             </div>
-            <ul class="sidebar-menu">
-                <li><a href="#" class="active" onclick="showBarberSection('schedule'); return false;">Minha Agenda</a></li>
-                <li><a href="#" onclick="showBarberSection('earnings'); return false;">Ganhos</a></li>
-                <li><a href="#" onclick="showBarberSection('block-times'); return false;">Bloquear Horários</a></li>
-                <li><a href="#" onclick="logout(); return false;">Sair</a></li>
-            </ul>
-        </aside>
-        <main class="main-content">
-            <div class="dashboard-header">
-                <h1>Painel do Barbeiro</h1>
-                <div id="barberDailyEarnings" style="font-size: 1.2rem; color: var(--primary-color); font-weight: 600;">
-                    Ganhos Hoje: R$ 0,00
-                </div>
+            <div class="stat-card">
+              <h3>Total do Mês</h3>
+              <div class="stat-value" id="barberMonthCount">0</div>
+            </div>
+            <div class="stat-card">
+              <h3>Limite Diário</h3>
+              <div class="stat-value">10</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>Agenda de Hoje</h2>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Horário</th>
+                    <th>Cliente</th>
+                    <th>Status</th>
+                    <th>Valor</th>
+                  </tr>
+                </thead>
+                <tbody id="barberScheduleTable">
+                  <!-- Populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Earnings Section -->
+        <div id="barber-earnings" class="dashboard-section hidden">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <h3>Ganhos Hoje</h3>
+              <div class="stat-value" id="earningsToday">R$ 0,00</div>
+            </div>
+            <div class="stat-card">
+              <h3>Ganhos do Mês</h3>
+              <div class="stat-value" id="earningsMonth">R$ 0,00</div>
+            </div>
+            <div class="stat-card">
+              <h3>Média por Serviço</h3>
+              <div class="stat-value">R$ 50,00</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>Histórico de Ganhos</h2>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Cliente</th>
+                    <th>Horário</th>
+                    <th>Valor</th>
+                  </tr>
+                </thead>
+                <tbody id="barberEarningsTable">
+                  <!-- Populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Block Times Section -->
+        <div id="barber-block-times" class="dashboard-section hidden">
+          <div class="card">
+            <div class="card-header">
+              <h2>Bloquear Horários</h2>
+            </div>
+            <p style="margin-bottom: 20px">
+              Use esta função para bloquear horários em que você não estará
+              disponível.
+            </p>
+
+            <div class="form-group">
+              <label>Data</label>
+              <input type="date" id="blockDate" />
             </div>
 
-            <!-- Schedule Section -->
-            <div id="barber-schedule" class="dashboard-section">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h3>Agendamentos Hoje</h3>
-                        <div class="stat-value" id="barberTodayCount">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Total do Mês</h3>
-                        <div class="stat-value" id="barberMonthCount">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Limite Diário</h3>
-                        <div class="stat-value">10</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Agenda de Hoje</h2>
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Horário</th>
-                                    <th>Cliente</th>
-                                    <th>Status</th>
-                                    <th>Valor</th>
-                                </tr>
-                            </thead>
-                            <tbody id="barberScheduleTable">
-                                <!-- Populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <h3 style="margin: 30px 0 20px">
+              Selecione os Horários para Bloquear
+            </h3>
+            <div class="time-slots-grid" id="blockTimeSlotsGrid">
+              <!-- Populated by JavaScript -->
             </div>
 
-            <!-- Earnings Section -->
-            <div id="barber-earnings" class="dashboard-section hidden">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h3>Ganhos Hoje</h3>
-                        <div class="stat-value" id="earningsToday">R$ 0,00</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Ganhos do Mês</h3>
-                        <div class="stat-value" id="earningsMonth">R$ 0,00</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Média por Serviço</h3>
-                        <div class="stat-value">R$ 50,00</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Histórico de Ganhos</h2>
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Data</th>
-                                    <th>Cliente</th>
-                                    <th>Horário</th>
-                                    <th>Valor</th>
-                                </tr>
-                            </thead>
-                            <tbody id="barberEarningsTable">
-                                <!-- Populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <div style="margin-top: 30px">
+              <button class="btn btn-primary" onclick="saveBlockedTimes()">
+                Salvar Bloqueios
+              </button>
             </div>
-
-            <!-- Block Times Section -->
-            <div id="barber-block-times" class="dashboard-section hidden">
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Bloquear Horários</h2>
-                    </div>
-                    <p style="margin-bottom: 20px;">Use esta função para bloquear horários em que você não estará disponível.</p>
-                    
-                    <div class="form-group">
-                        <label>Data</label>
-                        <input type="date" id="blockDate">
-                    </div>
-
-                    <h3 style="margin: 30px 0 20px;">Selecione os Horários para Bloquear</h3>
-                    <div class="time-slots-grid" id="blockTimeSlotsGrid">
-                        <!-- Populated by JavaScript -->
-                    </div>
-
-                    <div style="margin-top: 30px;">
-                        <button class="btn btn-primary" onclick="saveBlockedTimes()">Salvar Bloqueios</button>
-                    </div>
-                </div>
-            </div>
-        </main>
+          </div>
+        </div>
+      </main>
     </div>
 
     <!-- ===================================
          ADMIN DASHBOARD
     =================================== -->
     <div id="adminDashboard" class="dashboard hidden">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h3>BARBER ELITE</h3>
-                <p>Administrador</p>
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h3>BARBER ELITE</h3>
+          <p>Administrador</p>
+        </div>
+        <ul class="sidebar-menu">
+          <li>
+            <a
+              href="#"
+              class="active"
+              onclick="
+                showAdminSection('overview');
+                return false;
+              "
+              >Visão Geral</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              onclick="
+                showAdminSection('appointments');
+                return false;
+              "
+              >Todos Agendamentos</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              onclick="
+                showAdminSection('barbers');
+                return false;
+              "
+              >Gerenciar Barbeiros</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              onclick="
+                showAdminSection('financeiro');
+                return false;
+              "
+              >Financeiro</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              onclick="
+                showAdminSection('settings');
+                return false;
+              "
+              >Configurações</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              onclick="
+                logout();
+                return false;
+              "
+              >Sair</a
+            >
+          </li>
+        </ul>
+      </aside>
+      <main class="main-content">
+        <div class="dashboard-header">
+          <h1>Painel Administrativo</h1>
+          <button class="btn btn-primary" onclick="showAddBarberModal()">
+            Adicionar Barbeiro
+          </button>
+        </div>
+
+        <!-- Overview Section -->
+        <div id="admin-overview" class="dashboard-section">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <h3>Total Agendamentos Hoje</h3>
+              <div class="stat-value" id="adminTodayAppointments">0</div>
             </div>
-            <ul class="sidebar-menu">
-                <li><a href="#" class="active" onclick="showAdminSection('overview'); return false;">Visão Geral</a></li>
-                <li><a href="#" onclick="showAdminSection('appointments'); return false;">Todos Agendamentos</a></li>
-                <li><a href="#" onclick="showAdminSection('barbers'); return false;">Gerenciar Barbeiros</a></li>
-                <li><a href="#" onclick="showAdminSection('financeiro'); return false;">Financeiro</a></li>
-                <li><a href="#" onclick="showAdminSection('settings'); return false;">Configurações</a></li>
-                <li><a href="#" onclick="logout(); return false;">Sair</a></li>
-            </ul>
-        </aside>
-        <main class="main-content">
-            <div class="dashboard-header">
-                <h1>Painel Administrativo</h1>
-                <button class="btn btn-primary" onclick="showAddBarberModal()">Adicionar Barbeiro</button>
+            <div class="stat-card">
+              <h3>Total Barbeiros</h3>
+              <div class="stat-value" id="adminTotalBarbers">3</div>
+            </div>
+            <div class="stat-card">
+              <h3>Receita do Mês</h3>
+              <div class="stat-value" id="adminMonthRevenue">R$ 0,00</div>
+            </div>
+            <div class="stat-card">
+              <h3>Clientes Ativos</h3>
+              <div class="stat-value" id="adminActiveClients">0</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>Agendamentos de Hoje</h2>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Horário</th>
+                    <th>Cliente</th>
+                    <th>Barbeiro</th>
+                    <th>Status</th>
+                    <th>Valor</th>
+                  </tr>
+                </thead>
+                <tbody id="adminTodayTable">
+                  <!-- Populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- All Appointments Section -->
+        <div id="admin-appointments" class="dashboard-section hidden">
+          <div class="card">
+            <div class="card-header">
+              <h2>Todos os Agendamentos</h2>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Horário</th>
+                    <th>Cliente</th>
+                    <th>Barbeiro</th>
+                    <th>Status</th>
+                    <th>Valor</th>
+                  </tr>
+                </thead>
+                <tbody id="adminAllAppointmentsTable">
+                  <!-- Populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Manage Barbers Section -->
+        <div id="admin-barbers" class="dashboard-section hidden">
+          <div class="card">
+            <div class="card-header">
+              <h2>Gerenciar Barbeiros</h2>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Especialidade</th>
+                    <th>Agendamentos Hoje</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="adminBarbersTable">
+                  <!-- Populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Financial Section -->
+        <div id="admin-financeiro" class="dashboard-section hidden">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <h3>Receita do Dia</h3>
+              <div
+                class="stat-value"
+                style="color: var(--success)"
+                id="financeDayRevenue"
+              >
+                R$ 0,00
+              </div>
+            </div>
+            <div class="stat-card">
+              <h3>Receita do Mês</h3>
+              <div
+                class="stat-value"
+                style="color: var(--success)"
+                id="financeMonthRevenue"
+              >
+                R$ 0,00
+              </div>
+            </div>
+            <div class="stat-card">
+              <h3>Despesas do Mês</h3>
+              <div class="stat-value" style="color: var(--danger)">
+                R$ 3.500,00
+              </div>
+            </div>
+            <div class="stat-card">
+              <h3>Lucro Líquido</h3>
+              <div class="stat-value" id="financeProfit">R$ 0,00</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>Resumo Financeiro</h2>
+            </div>
+            <p style="padding: 20px; background: #f9f9f9; border-radius: 8px">
+              Sistema de controle financeiro simplificado. Valores baseados em
+              agendamentos confirmados. Despesas fixas mensais estimadas em R$
+              3.500,00.
+            </p>
+          </div>
+        </div>
+
+        <!-- Settings Section -->
+        <div id="admin-settings" class="dashboard-section hidden">
+          <div class="card">
+            <div class="card-header">
+              <h2>Configurações da Barbearia</h2>
             </div>
 
-            <!-- Overview Section -->
-            <div id="admin-overview" class="dashboard-section">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h3>Total Agendamentos Hoje</h3>
-                        <div class="stat-value" id="adminTodayAppointments">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Total Barbeiros</h3>
-                        <div class="stat-value" id="adminTotalBarbers">3</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Receita do Mês</h3>
-                        <div class="stat-value" id="adminMonthRevenue">R$ 0,00</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Clientes Ativos</h3>
-                        <div class="stat-value" id="adminActiveClients">0</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Agendamentos de Hoje</h2>
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Horário</th>
-                                    <th>Cliente</th>
-                                    <th>Barbeiro</th>
-                                    <th>Status</th>
-                                    <th>Valor</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminTodayTable">
-                                <!-- Populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <div class="form-group">
+              <label>Nome da Barbearia</label>
+              <input type="text" value="Barber Elite" id="settingName" />
             </div>
 
-            <!-- All Appointments Section -->
-            <div id="admin-appointments" class="dashboard-section hidden">
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Todos os Agendamentos</h2>
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Data</th>
-                                    <th>Horário</th>
-                                    <th>Cliente</th>
-                                    <th>Barbeiro</th>
-                                    <th>Status</th>
-                                    <th>Valor</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminAllAppointmentsTable">
-                                <!-- Populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <div class="form-group">
+              <label>Horário de Funcionamento</label>
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: 1fr 1fr;
+                  gap: 15px;
+                  max-width: 400px;
+                "
+              >
+                <input type="time" value="09:00" id="settingOpenTime" />
+                <input type="time" value="19:00" id="settingCloseTime" />
+              </div>
             </div>
 
-            <!-- Manage Barbers Section -->
-            <div id="admin-barbers" class="dashboard-section hidden">
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Gerenciar Barbeiros</h2>
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Email</th>
-                                    <th>Especialidade</th>
-                                    <th>Agendamentos Hoje</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminBarbersTable">
-                                <!-- Populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <div class="form-group">
+              <label>Valor Padrão do Corte (R$)</label>
+              <input
+                type="number"
+                value="50"
+                id="settingPrice"
+                style="max-width: 200px"
+              />
             </div>
 
-            <!-- Financial Section -->
-            <div id="admin-financeiro" class="dashboard-section hidden">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h3>Receita do Dia</h3>
-                        <div class="stat-value" style="color: var(--success);" id="financeDayRevenue">R$ 0,00</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Receita do Mês</h3>
-                        <div class="stat-value" style="color: var(--success);" id="financeMonthRevenue">R$ 0,00</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Despesas do Mês</h3>
-                        <div class="stat-value" style="color: var(--danger);">R$ 3.500,00</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Lucro Líquido</h3>
-                        <div class="stat-value" id="financeProfit">R$ 0,00</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Resumo Financeiro</h2>
-                    </div>
-                    <p style="padding: 20px; background: #f9f9f9; border-radius: 8px;">
-                        Sistema de controle financeiro simplificado. Valores baseados em agendamentos confirmados.
-                        Despesas fixas mensais estimadas em R$ 3.500,00.
-                    </p>
-                </div>
+            <div class="form-group">
+              <label>Intervalo entre Horários (minutos)</label>
+              <select id="settingInterval" style="max-width: 200px">
+                <option value="30">30 minutos</option>
+                <option value="60" selected>60 minutos</option>
+              </select>
             </div>
 
-            <!-- Settings Section -->
-            <div id="admin-settings" class="dashboard-section hidden">
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Configurações da Barbearia</h2>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Nome da Barbearia</label>
-                        <input type="text" value="Barber Elite" id="settingName">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Horário de Funcionamento</label>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 400px;">
-                            <input type="time" value="09:00" id="settingOpenTime">
-                            <input type="time" value="19:00" id="settingCloseTime">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Valor Padrão do Corte (R$)</label>
-                        <input type="number" value="50" id="settingPrice" style="max-width: 200px;">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Intervalo entre Horários (minutos)</label>
-                        <select id="settingInterval" style="max-width: 200px;">
-                            <option value="30">30 minutos</option>
-                            <option value="60" selected>60 minutos</option>
-                        </select>
-                    </div>
-
-                    <button class="btn btn-primary" onclick="saveSettings()">Salvar Configurações</button>
-                </div>
-            </div>
-        </main>
+            <button class="btn btn-primary" onclick="saveSettings()">
+              Salvar Configurações
+            </button>
+          </div>
+        </div>
+      </main>
     </div>
 
     <!-- ===================================
          MODAL - ADD BARBER
     =================================== -->
     <div id="addBarberModal" class="modal">
-        <div class="modal-content">
-            <span class="modal-close" onclick="closeAddBarberModal()">&times;</span>
-            <h2 style="margin-bottom: 30px;">Adicionar Novo Barbeiro</h2>
-            
-            <form id="addBarberForm">
-                <div class="form-group">
-                    <label>Nome Completo</label>
-                    <input type="text" id="newBarberName" required>
-                </div>
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeAddBarberModal()">&times;</span>
+        <h2 style="margin-bottom: 30px">Adicionar Novo Barbeiro</h2>
 
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="newBarberEmail" required>
-                </div>
+        <form id="addBarberForm">
+          <div class="form-group">
+            <label>Nome Completo</label>
+            <input type="text" id="newBarberName" required />
+          </div>
 
-                <div class="form-group">
-                    <label>Senha</label>
-                    <input type="password" id="newBarberPassword" required>
-                </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="newBarberEmail" required />
+          </div>
 
-                <div class="form-group">
-                    <label>Especialidade</label>
-                    <input type="text" id="newBarberSpecialty" placeholder="Ex: Cortes clássicos, Barba, etc." required>
-                </div>
+          <div class="form-group">
+            <label>Senha</label>
+            <input type="password" id="newBarberPassword" required />
+          </div>
 
-                <div class="form-group">
-                    <label>Foto (URL)</label>
-                    <input type="url" id="newBarberPhoto" placeholder="https://...">
-                </div>
+          <div class="form-group">
+            <label>Especialidade</label>
+            <input
+              type="text"
+              id="newBarberSpecialty"
+              placeholder="Ex: Cortes clássicos, Barba, etc."
+              required
+            />
+          </div>
 
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Adicionar Barbeiro</button>
-            </form>
-        </div>
+          <div class="form-group">
+            <label>Foto (URL)</label>
+            <input type="url" id="newBarberPhoto" placeholder="https://..." />
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%">
+            Adicionar Barbeiro
+          </button>
+        </form>
+      </div>
     </div>
 
-       <!-- ===============================
-         FIREBASE SDKs (CDN)
-    ================================ -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 
-    <!-- ===============================
-         CONFIGURAÇÃO DO FIREBASE
-    ================================ -->
+    <!-- Firebase config (fora da pasta) -->
     <script src="firebase-config.js"></script>
 
-    <!-- ===============================
-         SCRIPT PRINCIPAL DO SISTEMA
-    ================================ -->
+    <!-- JS internos -->
+    <script src="barbearia-saas/js/guards.js"></script>
+    <script src="barbearia-saas/js/auth.js"></script>
+    <script src="barbearia-saas/js/admin.js"></script>
+
+    <!-- Script geral -->
     <script src="script.js"></script>
-</body>
+  </body>
 </html>

@@ -1,223 +1,164 @@
-/* ===================================
-   AUTHENTICATION MODULE
-   Gerencia autenticação com Firebase Auth
-=================================== */
+// ===============================
+// CONTROLE DE TELAS
+// ===============================
 
-class AuthService {
-  constructor() {
-    this.auth = window.firebaseAuth;
-    this.db = window.firebaseDb;
-    this.currentUser = null;
-    this.userRole = null;
-    this.userData = null;
+window.showLogin = function () {
+  document.getElementById("landingPage")?.classList.add("hidden");
+  document.getElementById("loginPage")?.classList.remove("hidden");
+  document.getElementById("registerPage")?.classList.add("hidden");
+};
 
-    // Monitorar estado de autenticação
-    this.auth.onAuthStateChanged((user) => {
-      this.handleAuthStateChange(user);
+window.showLanding = function () {
+  document.getElementById("landingPage")?.classList.remove("hidden");
+  document.getElementById("loginPage")?.classList.add("hidden");
+  document.getElementById("registerPage")?.classList.add("hidden");
+};
+
+window.openRegister = function () {
+  document.getElementById("landingPage")?.classList.add("hidden");
+  document.getElementById("loginPage")?.classList.add("hidden");
+  document.getElementById("registerPage")?.classList.remove("hidden");
+};
+
+// ===============================
+// TUDO RODA APÓS DOM CARREGAR
+// ===============================
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  // ===============================
+  // LOGIN
+  // ===============================
+
+  const loginForm = document.getElementById("loginForm");
+
+  if (loginForm) {
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("loginEmail")?.value.trim();
+      const password = document.getElementById("loginPassword")?.value.trim();
+      const roleSelected = document.getElementById("loginRole")?.value;
+
+      if (!email || !password || !roleSelected) {
+        alert("Preencha todos os campos.");
+        return;
+      }
+
+      try {
+
+        const userCredential = await firebase
+          .auth()
+          .signInWithEmailAndPassword(email, password);
+
+        const uid = userCredential.user.uid;
+
+        const userDoc = await firebase
+          .firestore()
+          .collection("users")
+          .doc(uid)
+          .get();
+
+        if (!userDoc.exists) {
+          alert("Usuário não encontrado.");
+          await firebase.auth().signOut();
+          return;
+        }
+
+        const userData = userDoc.data();
+
+if (userData.role !== roleSelected) {
+  alert("Perfil selecionado incorreto.");
+  return; // ❌ NÃO DESLOGA
+}
+
+
+      } catch (error) {
+        alert("Erro no login: " + error.message);
+      }
     });
   }
 
-  // Manipula mudanças no estado de autenticação
-  async handleAuthStateChange(user) {
-    this.currentUser = user;
+  // ===============================
+  // REGISTRO
+  // ===============================
 
-    if (user) {
-      // Usuário logado → buscar perfil no Firestore
-      await this.fetchUserProfile(user.uid);
+  const registerForm = document.getElementById("registerForm");
 
-      // 🔥 Fonte da verdade global (ETAPA 3)
-      window.currentUser = {
-        uid: user.uid,
-        email: user.email,
-        name: this.userData?.name || '',
-        role: this.userRole,
-        barberId: this.userData?.barberId || null
-      };
-    } else {
-      // Usuário deslogado
-      this.userRole = null;
-      this.userData = null;
-      window.currentUser = null;
-    }
-  }
+  if (registerForm) {
+    registerForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-  // Busca perfil do usuário no Firestore
-  async fetchUserProfile(uid) {
-    try {
-      const userDoc = await this.db.collection('users').doc(uid).get();
+      const name = document.getElementById("registerName").value.trim();
+      const email = document.getElementById("registerEmail").value.trim();
+      const password = document.getElementById("registerPassword").value;
+      const confirmPassword = document.getElementById("registerConfirmPassword").value;
 
-      if (userDoc.exists) {
-        this.userData = userDoc.data();
-        this.userRole = userDoc.data().role;
-      } else {
-        // Se não existe documento, cria padrão (client)
-        await this.createUserDocument(uid);
-        this.userRole = 'client';
-        this.userData = {
-          name: this.currentUser.displayName || '',
-          email: this.currentUser.email,
-          role: 'client',
-          barberId: null
-        };
+      if (password !== confirmPassword) {
+        alert("As senhas não coincidem!");
+        return;
       }
-    } catch (error) {
-      console.error('Erro ao buscar perfil do usuário:', error);
-      this.userRole = 'client'; // Fallback seguro
-      this.userData = null;
-    }
+
+      if (password.length < 6) {
+        alert("A senha precisa ter no mínimo 6 caracteres.");
+        return;
+      }
+
+      try {
+
+        const userCredential = await firebase
+          .auth()
+          .createUserWithEmailAndPassword(email, password);
+
+        const user = userCredential.user;
+
+        await firebase
+          .firestore()
+          .collection("users")
+          .doc(user.uid)
+          .set({
+            name: name,
+            email: email,
+            role: "client",
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          });
+
+        alert("Conta criada com sucesso!");
+
+      } catch (error) {
+        alert("Erro ao criar conta: " + error.message);
+      }
+    });
   }
 
-  // Cria documento do usuário no Firestore
-  async createUserDocument(uid) {
-    try {
-      const userData = {
-        name: this.currentUser.displayName || '',
-        email: this.currentUser.email,
-        role: 'client',       // Role padrão
-        barberId: null,
+});
+
+// ===============================
+// LOGIN COM GOOGLE
+// ===============================
+
+window.loginWithGoogle = async function () {
+
+  const provider = new firebase.auth.GoogleAuthProvider();
+
+  try {
+
+    const result = await firebase.auth().signInWithPopup(provider);
+    const user = result.user;
+
+    const userRef = firebase.firestore().collection("users").doc(user.uid);
+    const docSnap = await userRef.get();
+
+    if (!docSnap.exists) {
+      await userRef.set({
+        name: user.displayName,
+        email: user.email,
+        role: "client",
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      };
-
-      await this.db.collection('users').doc(uid).set(userData);
-    } catch (error) {
-      console.error('Erro ao criar documento do usuário:', error);
-    }
-  }
-
-  // Login com Google
-  async loginWithGoogle() {
-    try {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      provider.addScope('profile');
-      provider.addScope('email');
-
-      const result = await this.auth.signInWithPopup(provider);
-
-      return { success: true, user: result.user };
-    } catch (error) {
-      console.error('Erro no login com Google:', error);
-      return { success: false, error: this.getErrorMessage(error) };
-    }
-  }
-
-  // Logout
-  async logout() {
-    try {
-      await this.auth.signOut();
-      return { success: true };
-    } catch (error) {
-      console.error('Erro ao fazer logout:', error);
-      return { success: false, error: this.getErrorMessage(error) };
-    }
-  }
-
-  // Verifica se usuário está autenticado
-  isAuthenticated() {
-    return !!this.currentUser;
-  }
-
-  // Verifica role do usuário
-  hasRole(role) {
-    return this.userRole === role;
-  }
-
-  // Obtém mensagem de erro amigável
-  getErrorMessage(error) {
-    switch (error.code) {
-      case 'auth/popup-closed-by-user':
-        return 'Login cancelado pelo usuário';
-      case 'auth/popup-blocked':
-        return 'Popup bloqueado pelo navegador. Permita popups para este site.';
-      case 'auth/network-request-failed':
-        return 'Erro de conexão. Verifique sua internet.';
-      case 'auth/unauthorized-domain':
-        return 'Domínio não autorizado. Entre em contato com o suporte.';
-      default:
-        return 'Erro ao fazer login. Tente novamente.';
-    }
-  }
-
-  // Atualiza perfil do usuário
-  async updateProfile(name) {
-    try {
-      await this.db.collection('users').doc(this.currentUser.uid).update({
-        name,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       });
-
-      return { success: true };
-    } catch (error) {
-      console.error('Erro ao atualizar perfil:', error);
-      return { success: false, error: 'Erro ao atualizar perfil' };
     }
-  }
 
-  // Obtém dados do usuário atual
-  getCurrentUser() {
-    return {
-      uid: this.currentUser?.uid,
-      email: this.currentUser?.email,
-      name: this.userData?.name || '',
-      role: this.userRole,
-      barberId: this.userData?.barberId || null
-    };
-  }
-}
-
-// Inicializa serviço de autenticação
-const authService = new AuthService();
-window.authService = authService;
-
-// Funções globais para uso em HTML
-window.loginWithGoogle = async function (event) {
-  const button = event?.target;
-  const originalText = button?.innerHTML;
-
-  if (button) {
-    button.innerHTML = 'Entrando...';
-    button.disabled = true;
-  }
-
-  const result = await authService.loginWithGoogle();
-
-  if (button) {
-    button.innerHTML = originalText;
-    button.disabled = false;
-  }
-
-  if (!result.success) {
-    showToast(result.error, 'error');
-  }
-
-  return result;
-};
-
-window.logout = async function () {
-  const result = await authService.logout();
-
-  if (result.success) {
-    window.location.href = 'index.html';
-  } else {
-    showToast(result.error, 'error');
+  } catch (error) {
+    alert("Erro ao entrar com Google: " + error.message);
   }
 };
-
-// Toast helper
-function showToast(message, type = 'info') {
-  const toast = document.createElement('div');
-  toast.className = `toast toast-${type}`;
-  toast.textContent = message;
-
-  const container = document.querySelector('.toast-container') || createToastContainer();
-  container.appendChild(toast);
-
-  setTimeout(() => toast.remove(), 4000);
-}
-
-function createToastContainer() {
-  const container = document.createElement('div');
-  container.className = 'toast-container';
-  document.body.appendChild(container);
-  return container;
-}

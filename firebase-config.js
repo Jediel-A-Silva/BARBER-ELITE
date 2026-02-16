@@ -1,8 +1,6 @@
-/* ===================================
+/* =================================== 
    FIREBASE CONFIGURATION (COMPAT)
 =================================== */
-
-let currentUser = null; // global (declare SÓ AQUI)
 
 const firebaseConfig = {
   apiKey: "AIzaSyDoeYJiuDQqsSk3kM_D1PRHIfuu2BHCFsg",
@@ -10,45 +8,127 @@ const firebaseConfig = {
   projectId: "barbearia-saas-97844",
   storageBucket: "barbearia-saas-97844.appspot.com",
   messagingSenderId: "20048637129",
-  appId: "1:20048637129:web:32f133716bf04f049e7118"
+  appId: "1:20048637129:web:32f133716bf04f049e7118",
 };
 
-// Evita inicializar duas vezes
+// 🔥 Evita inicializar duas vezes
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-const auth = firebase.auth();
-const db = firebase.firestore();
-const storage = firebase.storage();
-
-window.firebaseAuth = auth;
-window.firebaseDb = db;
-window.firebaseStorage = storage;
+// 🔐 Serviços globais
+window.auth = firebase.auth();
+window.db = firebase.firestore();
+window.storage = firebase.storage();
 
 console.log("🔥 Firebase inicializado");
 
-// Observa login/logout
-auth.onAuthStateChanged(async (user) => {
-  if (!user) return; // não está logado
+// ===================================
+// 🔐 CONTROLE GLOBAL DE LOGIN
+// ===================================
+
+window.auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+    window.currentUser = null;
+    if (typeof showLogin === "function") showLogin();
+    return;
+  }
+
+  if (!user.emailVerified) {
+    alert("Você precisa verificar seu email antes de acessar.");
+    await window.auth.signOut();
+    return;
+  }
+
+  if (!user) {
+    window.currentUser = null;
+    console.log("🚫 Nenhum usuário logado");
+    if (typeof showLogin === "function") showLogin();
+    return;
+  }
 
   try {
-    const doc = await db.collection("users").doc(user.uid).get();
 
-    if (!doc.exists) {
-      console.warn("Usuário sem perfil no Firestore");
-      alert("Usuário sem perfil no Firestore. Crie o documento users/" + user.uid);
-      return;
+    const userRef = window.db.collection("users").doc(user.uid);
+    let docSnap = await userRef.get();
+
+    // 🔥 Se não existir, cria automaticamente
+if (!docSnap.exists) {
+  console.log("🆕 Criando perfil automaticamente...");
+
+  await window.db.collection("users").doc(user.uid).set({
+    name: user.displayName || "Usuário",
+    email: user.email,
+    role: "client",
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+  });
+
+  return; // deixa o onAuthStateChanged rodar novamente
+}
+
+
+    const data = docSnap.data();
+
+    window.currentUser = {
+      uid: user.uid,
+      ...data
+    };
+
+    console.log("✅ Usuário carregado:", window.currentUser);
+
+    // 🔥 Redirecionamento
+    if (data.role === "barber" && typeof showBarberDashboard === "function") {
+      showBarberDashboard();
+    } 
+    else if (data.role === "admin" && typeof showAdminDashboard === "function") {
+      showAdminDashboard();
+    } 
+    else {
+      if (typeof showClientDashboard === "function") {
+        showClientDashboard();
+      }
     }
 
-    const data = doc.data();
-    currentUser = { uid: user.uid, ...data };
+  } catch (error) {
 
-    if (data.role === "client") showClientDashboard();
-    if (data.role === "barber") showBarberDashboard();
-    if (data.role === "admin") showAdminDashboard();
+    console.error("Erro ao carregar perfil:", error);
+    await window.auth.signOut();
+    if (typeof showLogin === "function") showLogin();
 
-  } catch (err) {
-    console.error("Erro ao buscar/criar perfil:", err);
   }
+
 });
+
+// ===================================
+// 🔥 FUNÇÃO GLOBAL DO ADMIN
+// ===================================
+
+function showAdminSection(section) {
+  // Esconde todas as seções
+  document.querySelectorAll(".dashboard-section").forEach(sec => {
+    sec.classList.add("hidden");
+  });
+
+  // Remove active do menu
+  document.querySelectorAll(".sidebar-menu a").forEach(link => {
+    link.classList.remove("active");
+  });
+
+  // Mostra a seção correta
+  const target = document.getElementById("admin-" + section);
+  if (target) {
+    target.classList.remove("hidden");
+  }
+
+  // Marca o menu como ativo
+  document.querySelectorAll(".sidebar-menu a").forEach(link => {
+    if (link.getAttribute("onclick")?.includes(section)) {
+      link.classList.add("active");
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM carregado");
+});
+

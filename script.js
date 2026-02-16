@@ -1,3 +1,16 @@
+// ===============================
+// ESTADOS DE SELEÇÃO
+// ===============================
+window.selectedBarberId = null;
+window.selectedBarberName = null;
+window.selectedDate = null;
+window.selectedTime = null;
+
+document.addEventListener("DOMContentLoaded", function () {
+  hideAllDashboards();
+  document.getElementById("landingPage").classList.add("hidden");
+});
+
 // ===================================
 // DATA STRUCTURE & INITIALIZATION
 // ===================================
@@ -36,17 +49,6 @@ let barbers = [
   },
 ];
 
-// Appointments storage
-let appointments = [];
-
-// Blocked times storage
-let blockedTimes = [];
-
-// Selected values for new appointment
-let selectedBarber = null;
-let selectedDate = null;
-let selectedTime = null;
-
 // ===================================
 // NAVIGATION FUNCTIONS
 // ===================================
@@ -68,14 +70,13 @@ function showLogin() {
 }
 
 function showClientDashboard() {
-  if (!window.currentUser) return; // 🔒 só entra se estiver logado
+  if (!window.currentUser) {
+    alert("Usuário não autenticado.");
+    return;
+  }
 
-  document.getElementById("landingPage").classList.add("hidden");
-  document.getElementById("loginPage").classList.add("hidden");
-
+  hideAllDashboards();
   document.getElementById("clientDashboard").classList.remove("hidden");
-  document.getElementById("barberDashboard").classList.add("hidden");
-  document.getElementById("adminDashboard").classList.add("hidden");
 
   if (typeof loadClientData === "function") {
     loadClientData();
@@ -83,14 +84,13 @@ function showClientDashboard() {
 }
 
 function showBarberDashboard() {
-  if (!window.currentUser) return; // 🔒 só entra se estiver logado
+  if (!window.currentUser) {
+    alert("Usuário não autenticado.");
+    return;
+  }
 
-  document.getElementById("landingPage").classList.add("hidden");
-  document.getElementById("loginPage").classList.add("hidden");
-
+  hideAllDashboards();
   document.getElementById("barberDashboard").classList.remove("hidden");
-  document.getElementById("clientDashboard").classList.add("hidden");
-  document.getElementById("adminDashboard").classList.add("hidden");
 
   if (typeof loadBarberData === "function") {
     loadBarberData();
@@ -98,55 +98,41 @@ function showBarberDashboard() {
 }
 
 function showAdminDashboard() {
-  if (!window.currentUser) return; // 🔒 só entra se estiver logado
+  if (!window.currentUser) {
+    alert("Usuário não autenticado.");
+    return;
+  }
 
-  document.getElementById("landingPage").classList.add("hidden");
-  document.getElementById("loginPage").classList.add("hidden");
-
+  hideAllDashboards();
   document.getElementById("adminDashboard").classList.remove("hidden");
-  document.getElementById("clientDashboard").classList.add("hidden");
-  document.getElementById("barberDashboard").classList.add("hidden");
 
   if (typeof loadAdminData === "function") {
     loadAdminData();
   }
 }
 
-function logout() {
-  currentUser = null;
-  showLanding();
-}
-
-
 // ===================================
 // CLIENT DASHBOARD FUNCTIONS
 // ===================================
 
-function showClientSection(section) {
-  // Hide all sections
+function showClientSection(section, event) {
   document
     .querySelectorAll("#clientDashboard .dashboard-section")
-    .forEach((s) => {
-      s.classList.add("hidden");
-    });
+    .forEach((s) => s.classList.add("hidden"));
 
-  // Show selected section
-  document.getElementById("client-" + section).classList.remove("hidden");
+  document.getElementById("client-" + section)?.classList.remove("hidden");
 
-  // Update active menu
-  document.querySelectorAll("#clientDashboard .sidebar-menu a").forEach((a) => {
-    a.classList.remove("active");
-  });
-  event.target.classList.add("active");
+  document
+    .querySelectorAll("#clientDashboard .sidebar-menu a")
+    .forEach((a) => a.classList.remove("active"));
 
-  // Load section data
-  if (section === "new-appointment") {
-    loadBarberSelection();
-  } else if (section === "appointments") {
-    loadClientAppointments();
-  } else if (section === "history") {
-    loadClientHistory();
+  if (event?.target) {
+    event.target.classList.add("active");
   }
+
+  if (section === "new-appointment") loadBarberSelection();
+  if (section === "appointments") loadClientAppointments();
+  if (section === "history") loadClientHistory();
 }
 
 function loadClientData() {
@@ -155,127 +141,138 @@ function loadClientData() {
 
 function loadClientAppointments() {
   const tbody = document.getElementById("clientAppointmentsTable");
-  const today = new Date().toISOString().split("T")[0];
 
-  const userAppointments = appointments.filter(
+  const upcoming = appointments.filter(
     (apt) =>
-      apt.clientEmail === currentUser.email &&
-      apt.date >= today &&
-      apt.status === "confirmed",
+      apt.clientId === window.currentUser.uid && apt.status === "confirmed",
   );
 
-  if (userAppointments.length === 0) {
-    tbody.innerHTML =
-      '<tr><td colspan="5" style="text-align: center; padding: 40px;">Você não tem agendamentos futuros</td></tr>';
+  if (upcoming.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" style="text-align:center; padding: 20px;">
+          Nenhum agendamento futuro
+        </td>
+      </tr>`;
     return;
   }
 
-  tbody.innerHTML = userAppointments
+  tbody.innerHTML = upcoming
     .map((apt) => {
       const barber = barbers.find((b) => b.id === apt.barberId);
       return `
-            <tr>
-                <td>${formatDate(apt.date)}</td>
-                <td>${apt.time}</td>
-                <td>${barber ? barber.name : "N/A"}</td>
-                <td><span class="status-badge status-confirmed">Confirmado</span></td>
-                <td>
-                    <button class="btn btn-danger" style="padding: 8px 16px; font-size: 0.9rem;" 
-                        onclick="cancelAppointment(${apt.id})">
-                        Cancelar
-                    </button>
-                </td>
-            </tr>
-        `;
+        <tr>
+          <td>${apt.date}</td>
+          <td>${apt.time}</td>
+          <td>${barber ? barber.name : "-"}</td>
+          <td><span class="status-badge status-confirmed">Confirmado</span></td>
+          <td>
+            <button class="btn btn-secondary" onclick="cancelAppointment(${apt.id})">
+              Cancelar
+            </button>
+          </td>
+        </tr>
+      `;
     })
     .join("");
 }
 
-function loadClientHistory() {
-  const tbody = document.getElementById("clientHistoryTable");
-  const today = new Date().toISOString().split("T")[0];
-
-  const pastAppointments = appointments.filter(
-    (apt) =>
-      apt.clientEmail === currentUser.email &&
-      (apt.date < today || apt.status === "cancelled"),
-  );
-
-  if (pastAppointments.length === 0) {
-    tbody.innerHTML =
-      '<tr><td colspan="4" style="text-align: center; padding: 40px;">Sem histórico de agendamentos</td></tr>';
-    return;
-  }
-
-  tbody.innerHTML = pastAppointments
-    .map((apt) => {
-      const barber = barbers.find((b) => b.id === apt.barberId);
-      const statusClass =
-        apt.status === "cancelled" ? "status-cancelled" : "status-confirmed";
-      const statusText = apt.status === "cancelled" ? "Cancelado" : "Concluído";
-
-      return `
-            <tr>
-                <td>${formatDate(apt.date)}</td>
-                <td>${apt.time}</td>
-                <td>${barber ? barber.name : "N/A"}</td>
-                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-            </tr>
-        `;
-    })
-    .join("");
-}
-
-function loadBarberSelection() {
+async function loadBarberSelection() {
   const grid = document.getElementById("barberSelectionGrid");
-  grid.innerHTML = barbers
-    .map(
-      (barber) => `
-        <div class="barber-select-card" onclick="selectBarber(${barber.id})">
-            <div class="barber-avatar" style="background-image: url('${barber.photo}')"></div>
-            <h4>${barber.name}</h4>
-            <p style="font-size: 0.9rem; color: #666;">${barber.specialty}</p>
-            <p style="font-size: 0.85rem; color: var(--primary-color); font-weight: 600;">⭐ ${barber.rating}</p>
-        </div>
-    `,
-    )
-    .join("");
 
-  document.getElementById("dateTimeSelection").classList.add("hidden");
-  selectedBarber = null;
-  selectedDate = null;
-  selectedTime = null;
+  if (!grid) {
+    console.error("barberSelectionGrid não encontrado");
+    return;
+  }
+
+  grid.innerHTML = "<p>Carregando barbeiros...</p>";
+
+  try {
+    const snapshot = await firebase
+      .firestore()
+      .collection("users")
+      .where("role", "==", "barber")
+      .get();
+
+    if (snapshot.empty) {
+      grid.innerHTML = "<p>Nenhum barbeiro cadastrado.</p>";
+      return;
+    }
+
+    grid.innerHTML = "";
+
+    snapshot.forEach((doc) => {
+      const barber = doc.data();
+
+      grid.innerHTML += `
+        <div class="barber-select-card"
+             onclick="selectBarber('${doc.id}', '${barber.name}', event)">
+
+          <div class="barber-avatar"
+               style="background-image: url('${barber.photo || ""}')">
+          </div>
+
+          <h4>${barber.name}</h4>
+          <p style="font-size: 0.9rem; color: #666;">
+            ${barber.specialty || "Barbeiro profissional"}
+          </p>
+
+          <p style="font-size: 0.85rem;
+                    color: var(--primary-color);
+                    font-weight: 600;">
+            ⭐ ${barber.rating || 5}
+          </p>
+
+        </div>
+      `;
+    });
+  } catch (error) {
+    console.error("Erro ao carregar barbeiros:", error);
+    grid.innerHTML = "<p>Erro ao carregar barbeiros.</p>";
+  }
+
+  document.getElementById("dateTimeSelection")?.classList.add("hidden");
+
+  window.selectedBarberId = null;
+  window.selectedTime = null;
 }
 
-function selectBarber(barberId) {
-  selectedBarber = barberId;
+window.selectBarber = function (barberId, barberName, event) {
+  // ✅ USA O NOME CERTO
+  window.selectedBarberId = barberId;
+  window.selectedBarberName = barberName || "";
 
-  // Update UI
+  console.log("Barbeiro selecionado:", window.selectedBarberId);
+
   document.querySelectorAll(".barber-select-card").forEach((card) => {
     card.classList.remove("selected");
   });
-  event.target.closest(".barber-select-card").classList.add("selected");
 
-  // Show date/time selection
-  document.getElementById("dateTimeSelection").classList.remove("hidden");
+  if (event && event.target) {
+    event.target.closest(".barber-select-card")?.classList.add("selected");
+  }
 
-  // Set min date to today
+  document.getElementById("dateTimeSelection")?.classList.remove("hidden");
+
   const today = new Date().toISOString().split("T")[0];
   const dateInput = document.getElementById("appointmentDate");
-  dateInput.min = today;
-  dateInput.value = today;
+
+  if (dateInput) {
+    dateInput.min = today;
+    dateInput.value = today;
+    window.selectedDate = today;
+  }
 
   loadTimeSlots();
-}
+};
 
 function loadTimeSlots() {
   const date = document.getElementById("appointmentDate").value;
-  if (!date || !selectedBarber) return;
+  if (!date || !window.selectedBarberId) return;
 
   selectedDate = date;
   const grid = document.getElementById("timeSlotsGrid");
 
-  // Generate time slots from 9:00 to 18:00
   const times = [];
   for (let hour = 9; hour <= 18; hour++) {
     times.push(`${hour.toString().padStart(2, "0")}:00`);
@@ -285,7 +282,7 @@ function loadTimeSlots() {
     .map((time) => {
       const isBooked = appointments.some(
         (apt) =>
-          apt.barberId === selectedBarber &&
+          apt.barberId === window.selectedBarberId && // ✅ aqui
           apt.date === date &&
           apt.time === time &&
           apt.status === "confirmed",
@@ -293,7 +290,7 @@ function loadTimeSlots() {
 
       const isBlocked = blockedTimes.some(
         (bt) =>
-          bt.barberId === selectedBarber &&
+          bt.barberId === selectedBarberId && // ✅ aqui
           bt.date === date &&
           bt.time === time,
       );
@@ -301,46 +298,62 @@ function loadTimeSlots() {
       const disabled = isBooked || isBlocked;
 
       return `
-            <div class="time-slot ${disabled ? "disabled" : ""}" 
-                 onclick="${disabled ? "" : `selectTimeSlot('${time}')`}">
-                ${time}
-                ${disabled ? "<br><small>(Ocupado)</small>" : ""}
-            </div>
-        `;
+      <div class="time-slot ${disabled ? "disabled" : ""}"
+           ${disabled ? "" : `onclick="selectTimeSlot(this, '${time}')"`}>
+        ${time}
+      </div>
+    `;
     })
     .join("");
 }
 
-function selectTimeSlot(time) {
-  selectedTime = time;
+async function confirmAppointment() {
+  const user = firebase.auth().currentUser;
 
-  document.querySelectorAll(".time-slot").forEach((slot) => {
-    slot.classList.remove("selected");
-  });
-  event.target.classList.add("selected");
-}
-
-function confirmAppointment() {
-  if (!selectedBarber || !selectedDate || !selectedTime) {
-    alert("Por favor, selecione barbeiro, data e horário");
+  if (!user) {
+    alert("Usuário não autenticado");
     return;
   }
 
-  const appointment = {
-    id: appointments.length + 1,
-    barberId: selectedBarber,
-    clientEmail: currentUser.email,
-    clientName: currentUser.name,
-    date: selectedDate,
-    time: selectedTime,
+  if (
+    !window.selectedBarberId ||
+    !window.selectedDate ||
+    !window.selectedTime
+  ) {
+    alert("Selecione barbeiro, data e horário.");
+    return;
+  }
+
+  const appointmentData = {
+    clientId: user.uid,
+    clientName: window.currentUser?.name || "Cliente",
+    barberId: window.selectedBarberId,
+    barberName: window.selectedBarberName,
+    date: window.selectedDate,
+    time: window.selectedTime,
+    service: window.selectedService || "Corte",
+    value: 50,
     status: "confirmed",
-    value: 50.0,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
   };
 
-  appointments.push(appointment);
+  try {
+    await firebase.firestore().collection("appointments").add(appointmentData);
 
-  alert("Agendamento confirmado com sucesso!");
-  showClientSection("appointments");
+    alert("✅ Agendamento criado com sucesso!");
+
+    // Volta pra tela de próximos agendamentos
+    showClientSection("appointments");
+
+    // Limpa seleção (UX melhor)
+    window.selectedTime = null;
+    document
+      .querySelectorAll(".time-slot")
+      .forEach((el) => el.classList.remove("selected"));
+  } catch (error) {
+    console.error("Erro ao criar agendamento:", error);
+    alert("Erro ao criar agendamento.");
+  }
 }
 
 function cancelNewAppointment() {
@@ -372,27 +385,24 @@ document.addEventListener("DOMContentLoaded", function () {
 // BARBER DASHBOARD FUNCTIONS
 // ===================================
 
-function showBarberSection(section) {
+function showBarberSection(section, event) {
   document
     .querySelectorAll("#barberDashboard .dashboard-section")
-    .forEach((s) => {
-      s.classList.add("hidden");
-    });
+    .forEach((s) => s.classList.add("hidden"));
 
-  document.getElementById("barber-" + section).classList.remove("hidden");
+  document.getElementById("barber-" + section)?.classList.remove("hidden");
 
-  document.querySelectorAll("#barberDashboard .sidebar-menu a").forEach((a) => {
-    a.classList.remove("active");
-  });
-  event.target.classList.add("active");
+  document
+    .querySelectorAll("#barberDashboard .sidebar-menu a")
+    .forEach((a) => a.classList.remove("active"));
 
-  if (section === "schedule") {
-    loadBarberSchedule();
-  } else if (section === "earnings") {
-    loadBarberEarnings();
-  } else if (section === "block-times") {
-    loadBlockTimesSection();
+  if (event?.target) {
+    event.target.classList.add("active");
   }
+
+  if (section === "schedule") loadBarberSchedule();
+  if (section === "earnings") loadBarberEarnings();
+  if (section === "block-times") loadBlockTimesSection();
 }
 
 function loadBarberData() {
@@ -404,9 +414,9 @@ function loadBarberSchedule() {
   const tbody = document.getElementById("barberScheduleTable");
   const today = new Date().toISOString().split("T")[0];
 
-  const todayAppointments = appointments.filter(
+  const todayAppointments = (window.appointments || []).filter(
     (apt) =>
-      apt.barberId === currentUser.barberId &&
+      apt.barberId === window.currentUser.uid &&
       apt.date === today &&
       apt.status === "confirmed",
   );
@@ -424,9 +434,9 @@ function loadBarberSchedule() {
             <td>${apt.time}</td>
             <td>${apt.clientName}</td>
             <td><span class="status-badge status-confirmed">Confirmado</span></td>
-            <td>R$ ${apt.value.toFixed(2)}</td>
+            <td>${apt.service || "-"}</td>
         </tr>
-    `,
+      `,
     )
     .join("");
 }
@@ -437,20 +447,20 @@ function updateBarberStats() {
 
   const todayAppointments = appointments.filter(
     (apt) =>
-      apt.barberId === currentUser.barberId &&
+      apt.barberId === window.currentUser.uid &&
       apt.date === today &&
       apt.status === "confirmed",
   );
 
   const monthAppointments = appointments.filter(
     (apt) =>
-      apt.barberId === currentUser.barberId &&
+      apt.barberId === window.currentUser.uid &&
       apt.date.startsWith(currentMonth) &&
       apt.status === "confirmed",
   );
 
   const todayEarnings = todayAppointments.reduce(
-    (sum, apt) => sum + apt.value,
+    (sum, apt) => sum + Number(apt.value || 0),
     0,
   );
 
@@ -468,24 +478,24 @@ function loadBarberEarnings() {
 
   const todayAppointments = appointments.filter(
     (apt) =>
-      apt.barberId === currentUser.barberId &&
+      apt.barberId === window.currentUser.uid &&
       apt.date === today &&
       apt.status === "confirmed",
   );
 
   const monthAppointments = appointments.filter(
     (apt) =>
-      apt.barberId === currentUser.barberId &&
+      apt.barberId === window.currentUser.uid &&
       apt.date.startsWith(currentMonth) &&
       apt.status === "confirmed",
   );
 
   const todayEarnings = todayAppointments.reduce(
-    (sum, apt) => sum + apt.value,
+    (sum, apt) => sum + Number(apt.value || 0),
     0,
   );
   const monthEarnings = monthAppointments.reduce(
-    (sum, apt) => sum + apt.value,
+    (sum, apt) => sum + Number(apt.value || 0),
     0,
   );
 
@@ -499,7 +509,7 @@ function loadBarberEarnings() {
   const allEarnings = appointments
     .filter(
       (apt) =>
-        apt.barberId === currentUser.barberId && apt.status === "confirmed",
+        apt.barberId === window.currentUser.uid && apt.status === "confirmed",
     )
     .reverse();
 
@@ -517,7 +527,7 @@ function loadBarberEarnings() {
             <td>${formatDate(apt.date)}</td>
             <td>${apt.clientName}</td>
             <td>${apt.time}</td>
-            <td style="color: var(--success); font-weight: 600;">R$ ${apt.value.toFixed(2)}</td>
+            <td style="color: var(--success); font-weight: 600;">R$ ${Number(apt.value || 0).toFixed(2)}</td>
         </tr>
     `,
     )
@@ -544,7 +554,7 @@ function loadBlockTimeSlots() {
     .map((time) => {
       const isBlocked = blockedTimes.some(
         (bt) =>
-          bt.barberId === currentUser.barberId &&
+          bt.barberId === window.currentUser.uid &&
           bt.date === date &&
           bt.time === time,
       );
@@ -593,34 +603,22 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+function selectTimeSlot(el, time) {
+  if (el.classList.contains("disabled")) return;
+
+  document.querySelectorAll(".time-slot").forEach((slot) => {
+    slot.classList.remove("selected");
+  });
+
+  el.classList.add("selected");
+  selectedTime = time;
+
+  console.log("Horário selecionado:", selectedTime);
+}
+
 // ===================================
 // ADMIN DASHBOARD FUNCTIONS
 // ===================================
-
-function showAdminSection(section) {
-  document
-    .querySelectorAll("#adminDashboard .dashboard-section")
-    .forEach((s) => {
-      s.classList.add("hidden");
-    });
-
-  document.getElementById("admin-" + section).classList.remove("hidden");
-
-  document.querySelectorAll("#adminDashboard .sidebar-menu a").forEach((a) => {
-    a.classList.remove("active");
-  });
-  event.target.classList.add("active");
-
-  if (section === "overview") {
-    loadAdminOverview();
-  } else if (section === "appointments") {
-    loadAdminAllAppointments();
-  } else if (section === "barbers") {
-    loadAdminBarbers();
-  } else if (section === "financeiro") {
-    loadAdminFinancial();
-  }
-}
 
 function loadAdminData() {
   loadAdminOverview();
@@ -639,9 +637,10 @@ function loadAdminOverview() {
   );
 
   const monthRevenue = monthAppointments.reduce(
-    (sum, apt) => sum + apt.value,
+    (sum, apt) => sum + Number(apt.value || 0),
     0,
   );
+
   const uniqueClients = new Set(appointments.map((apt) => apt.clientEmail))
     .size;
 
@@ -670,7 +669,7 @@ function loadAdminOverview() {
                 <td>${apt.clientName}</td>
                 <td>${barber ? barber.name : "N/A"}</td>
                 <td><span class="status-badge status-confirmed">Confirmado</span></td>
-                <td style="color: var(--success); font-weight: 600;">R$ ${apt.value.toFixed(2)}</td>
+                <td style="color: var(--success); font-weight: 600;">R$ ${Number(apt.value || 0).toFixed(2)}</td>
             </tr>
         `;
     })
@@ -703,7 +702,7 @@ function loadAdminAllAppointments() {
                 <td>${apt.clientName}</td>
                 <td>${barber ? barber.name : "N/A"}</td>
                 <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                <td style="color: var(--success); font-weight: 600;">R$ ${apt.value.toFixed(2)}</td>
+                <td style="color: var(--success); font-weight: 600;">R$ ${Number(apt.value || 0).toFixed(2)}</td>
             </tr>
         `;
     })
@@ -745,15 +744,19 @@ function loadAdminFinancial() {
   const today = new Date().toISOString().split("T")[0];
   const currentMonth = new Date().toISOString().slice(0, 7);
 
-  const todayRevenue = appointments
-    .filter((apt) => apt.date === today && apt.status === "confirmed")
-    .reduce((sum, apt) => sum + apt.value, 0);
+  const todayRevenue = appointments.filter(
+    (apt) => apt.date === today && apt.status === "confirmed",
+  );
+  const todayEarnings = todayAppointments.reduce(
+    (sum, apt) => sum + Number(apt.value || 0),
+    0,
+  );
 
   const monthRevenue = appointments
     .filter(
       (apt) => apt.date.startsWith(currentMonth) && apt.status === "confirmed",
     )
-    .reduce((sum, apt) => sum + apt.value, 0);
+    .reduce((sum, apt) => sum + (apt.value || 0), 0);
 
   const expenses = 3500.0;
   const profit = monthRevenue - expenses;
@@ -908,30 +911,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initialize carousels
   initCarousel("carousel1", "carousel1-controls");
   initCarousel("carousel2", "carousel2-controls");
-
-  // Add sample appointments for demo
-  appointments = [
-    {
-      id: 1,
-      barberId: 1,
-      clientEmail: "cliente@teste.com",
-      clientName: "João Silva",
-      date: new Date().toISOString().split("T")[0],
-      time: "10:00",
-      status: "confirmed",
-      value: 50.0,
-    },
-    {
-      id: 2,
-      barberId: 2,
-      clientEmail: "cliente@teste.com",
-      clientName: "João Silva",
-      date: new Date().toISOString().split("T")[0],
-      time: "14:00",
-      status: "confirmed",
-      value: 50.0,
-    },
-  ];
 });
 
 // Smooth scroll for anchor links
@@ -952,81 +931,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
-document.addEventListener("DOMContentLoaded", () => {
-  const loginForm = document.getElementById("loginForm");
-
-  if (!loginForm) {
-    console.error("Formulário de login não encontrado");
-    return;
-  }
-
-  loginForm.addEventListener("submit", async (e) => {
-    e.preventDefault(); // 🔥 ESSENCIAL
-
-    console.log("Submit do login disparado");
-
-    const email = document.getElementById("loginEmail").value;
-    const senha = document.getElementById("loginPassword").value;
-    const roleSelecionado = document.getElementById("loginRole").value;
-
-    try {
-      const userCredential = await firebase
-        .auth()
-        .signInWithEmailAndPassword(email, senha);
-
-      console.log("Auth OK");
-
-      const uid = userCredential.user.uid;
-
-      const userDoc = await firebase
-        .firestore()
-        .collection("users")
-        .doc(uid)
-        .get();
-
-      if (!userDoc.exists) {
-        alert("Usuário sem perfil no sistema");
-        return;
-      }
-
-      const roleBanco = userDoc.data().role;
-
-      if (roleBanco !== roleSelecionado) {
-        alert("Perfil incorreto para este usuário");
-        return;
-      }
-
-      // 🔀 CONTROLE DE TELAS
-      showClientDashboard();
-      // ou
-      showBarberDashboard();
-      // ou
-      showAdminDashboard();
-
-      if (roleBanco === "cliente") {
-        document.getElementById("clientDashboard").classList.remove("hidden");
-      }
-
-      if (roleBanco === "barbeiro") {
-        document.getElementById("barberDashboard").classList.remove("hidden");
-      }
-
-      if (roleBanco === "admin") {
-        document.getElementById("adminDashboard").classList.remove("hidden");
-      }
-
-      console.log("Login finalizado com sucesso");
-    } catch (error) {
-      console.error(error);
-      alert("Erro ao fazer login: " + error.message);
-    }
-  });
-});
 
 // ===============================
 // ESTADO GLOBAL
 // ===============================
 window.currentUser = null;
+window.appointments = [];
+window.blockedTimes = [];
 
 // ===============================
 // ELEMENTOS
@@ -1036,117 +947,226 @@ const emailInput = document.getElementById("loginEmail");
 const passwordInput = document.getElementById("loginPassword");
 const roleSelect = document.getElementById("loginRole");
 
-// Dashboards
-const loginSection = document.getElementById("loginPage");
+// Dashboards / Páginas
+const loginPage = document.getElementById("loginPage");
+const landingPage = document.getElementById("landingPage");
 const clientDashboard = document.getElementById("clientDashboard");
 const barberDashboard = document.getElementById("barberDashboard");
 const adminDashboard = document.getElementById("adminDashboard");
 
 // ===============================
-// FUNÇÃO AUXILIAR
+// FUNÇÕES DE SEGURANÇA (EVITA TELA BRANCA)
 // ===============================
-function hideAllDashboards() {
-  loginSection.classList.add("hidden");
-  clientDashboard.classList.add("hidden");
-  barberDashboard.classList.add("hidden");
-  adminDashboard.classList.add("hidden");
-}
+window.showClientDashboard ||= function () {
+  hideAllDashboards();
+  clientDashboard?.classList.remove("hidden");
+};
+
+window.showBarberDashboard ||= function () {
+  hideAllDashboards();
+  barberDashboard?.classList.remove("hidden");
+};
+
+window.showAdminDashboard ||= function () {
+  hideAllDashboards();
+  adminDashboard?.classList.remove("hidden");
+};
+
+window.loadBarberSchedule ||= function () {};
+window.loadClientAppointments ||= function () {};
+window.loadAdminAllAppointments ||= function () {};
 
 // ===============================
-// DASHBOARDS
+// FUNÇÃO AUXILIAR
 // ===============================
+// ===============================
+// CONTROLE DE TELAS
+// ===============================
+
+function hideAllDashboards() {
+  document.getElementById("landingPage")?.classList.add("hidden");
+  document.getElementById("loginPage")?.classList.add("hidden");
+  document.getElementById("registerPage")?.classList.add("hidden");
+  document.getElementById("clientDashboard")?.classList.add("hidden");
+  document.getElementById("barberDashboard")?.classList.add("hidden");
+  document.getElementById("adminDashboard")?.classList.add("hidden");
+}
+
 function showClientDashboard() {
   hideAllDashboards();
-  clientDashboard.classList.remove("hidden");
-  console.log("Dashboard do CLIENTE carregado");
+  document.getElementById("clientDashboard")?.classList.remove("hidden");
 }
 
 function showBarberDashboard() {
   hideAllDashboards();
-  barberDashboard.classList.remove("hidden");
-  console.log("Dashboard do BARBEIRO carregado");
+  document.getElementById("barberDashboard")?.classList.remove("hidden");
 }
 
 function showAdminDashboard() {
   hideAllDashboards();
-  adminDashboard.classList.remove("hidden");
-  console.log("Dashboard do ADMIN carregado");
+  document.getElementById("adminDashboard")?.classList.remove("hidden");
 }
+
+function showLogin() {
+  hideAllDashboards();
+  document.getElementById("loginPage")?.classList.remove("hidden");
+}
+
+function showLanding() {
+  hideAllDashboards();
+  document.getElementById("landingPage")?.classList.remove("hidden");
+}
+
 
 // ===============================
 // LOGIN
 // ===============================
-loginForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  console.log("Submit do login disparado");
+if (loginForm) {
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    console.log("Submit do login disparado");
 
-  const email = emailInput.value.trim();
-  const password = passwordInput.value.trim();
-  const roleSelected = roleSelect.value;
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+    const roleSelected = roleSelect.value;
 
-  if (!email || !password || !roleSelected) {
-    alert("Preencha todos os campos.");
-    return;
-  }
-
-  try {
-    // 🔐 Firebase Auth
-    const userCredential = await firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password);
-
-    console.log("Auth OK");
-
-    const uid = userCredential.user.uid;
-
-    // 🔎 Busca no Firestore
-    const userDoc = await firebase
-      .firestore()
-      .collection("users")
-      .doc(uid)
-      .get();
-
-    if (!userDoc.exists) {
-      alert("Usuário não encontrado no sistema.");
-      await firebase.auth().signOut();
+    if (!email || !password || !roleSelected) {
+      alert("Preencha todos os campos.");
       return;
     }
 
-    const userData = userDoc.data();
+    try {
+      const userCredential = await firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password);
 
-    // 🔐 Validação de perfil
-    if (userData.role !== roleSelected) {
-      alert("Perfil selecionado incorreto.");
-      await firebase.auth().signOut();
-      return;
+      const uid = userCredential.user.uid;
+
+      const userDoc = await firebase
+        .firestore()
+        .collection("users")
+        .doc(uid)
+        .get();
+
+      const userData = userDoc.data();
+
+      if (userData.role !== roleSelected) {
+        alert("Perfil selecionado incorreto.");
+        await firebase.auth().signOut();
+        return;
+      }
+
+      window.currentUser = { uid, ...userData };
+
+      console.log("Login finalizado com sucesso", window.currentUser);
+      // Dashboard é mostrado no onAuthStateChanged
+    } catch (error) {
+      console.error("Erro no login:", error);
+      alert("Erro no login: " + error.message);
     }
+  });
+}
 
-    // ✅ Estado global correto
-    window.currentUser = {
-      uid,
-      ...userData
-    };
+// ===============================
+// LISTENER GLOBAL DE APPOINTMENTS
+// ===============================
+let unsubscribeAppointments = null;
 
-    console.log("Login finalizado com sucesso", window.currentUser);
+function listenAppointments() {
+  if (unsubscribeAppointments) unsubscribeAppointments();
 
-    // 🚀 Redirecionamento por perfil
-    if (userData.role === "cliente") showClientDashboard();
-    if (userData.role === "barbeiro") showBarberDashboard();
-    if (userData.role === "admin") showAdminDashboard();
+  unsubscribeAppointments = firebase
+    .firestore()
+    .collection("appointments")
+    .orderBy("createdAt", "desc")
+    .onSnapshot((snapshot) => {
+      const data = [];
 
-  } catch (error) {
-    console.error("Erro no login:", error);
-    alert("Erro no login: " + error.message);
-  }
-});
+      snapshot.forEach((doc) => {
+        data.push({ id: doc.id, ...doc.data() });
+      });
+
+      window.appointments = data;
+      console.log("Appointments atualizados:", data);
+
+      if (window.currentUser?.role === "barber") {
+        loadBarberSchedule();
+        updateBarberStats(); // 👈 ADICIONE ISSO
+      }
+
+      if (window.currentUser?.role === "client") loadClientAppointments();
+      if (window.currentUser?.role === "admin") loadAdminAllAppointments();
+    });
+}
 
 // ===============================
 // LOGOUT
 // ===============================
 async function logout() {
+  if (unsubscribeAppointments) {
+    unsubscribeAppointments();
+    unsubscribeAppointments = null;
+  }
+
   await firebase.auth().signOut();
   window.currentUser = null;
+
   hideAllDashboards();
-  loginSection.classList.remove("hidden");
+  loginPage?.classList.remove("hidden");
+
   console.log("Logout realizado");
 }
+
+// ===============================
+// RESTAURA SESSÃO
+// ===============================
+firebase.auth().onAuthStateChanged(async (user) => {
+
+  if (!user) {
+    showLogin();
+    return;
+  }
+
+  try {
+    const userRef = firebase.firestore().collection("users").doc(user.uid);
+    let userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      await userRef.set({
+        name: user.displayName || "Cliente",
+        email: user.email,
+        role: "client",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+
+      userDoc = await userRef.get();
+    }
+
+    const userData = userDoc.data();
+
+    if (userData.role === "client") showClientDashboard();
+    if (userData.role === "barber") showBarberDashboard();
+    if (userData.role === "admin") showAdminDashboard();
+
+  } catch (error) {
+    console.error("Erro ao restaurar sessão:", error);
+  }
+});
+// ===============================
+// CRIAR APPOINTMENT
+// ===============================
+async function createAppointment(data) {
+  try {
+    await firebase.firestore().collection("appointments").add(data);
+    console.log("Agendamento criado com sucesso");
+  } catch (error) {
+    console.error("Erro ao criar agendamento:", error);
+  }
+}
+
+// Tornar funções globais (porque você usa onclick no HTML)
+window.showLogin = showLogin;
+window.showLanding = showLanding;
+window.showClientDashboard = showClientDashboard;
+window.showBarberDashboard = showBarberDashboard;
+window.showAdminDashboard = showAdminDashboard;
